@@ -49,16 +49,6 @@ export function createMaterials() {
     slab: std(0xe8e4dc, .9),
     lift: std(0xd7d3ca, .8),
     light: new THREE.MeshBasicMaterial({ color: 0xfff1c8 }),
-    vent: std(0xaaaaaa, .7),
-    // Kitchen-specific materials for realism
-    steelBrush: std(0xb5bcc4, .25, .75),  // brushed stainless: lighter, highly metallic
-    granite: std(0x3a3a3a, .4, .05),     // granite countertop: dark, matte, slight sparkle
-    graniteDk: std(0x2a2a2a, .45, .08),  // darker granite variant
-    wood_oak: std(0xc9a871, .5, .0),     // solid oak cabinet side: warm, low gloss
-    ceramicWhite: std(0xf5f5f5, .35, .0), // ceramic tile: very white, slight gloss
-    ceramicGrey: std(0xe8e8e8, .3, .0),  // light grey ceramic
-    chrome: std(0xd4d4d4, .2, .9),       // chrome handles: very shiny
-    blackGlass: std(0x1a1a1a, .15, .8),  // stovetop glass: reflective black
-    stainlessTop: std(0xc0c0c0, .2, .85) // appliance tops: polished stainless
+    vent: std(0xaaaaaa, .7)
   };
 }
