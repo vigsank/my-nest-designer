@@ -5,6 +5,10 @@ export function build(g, M, FP, addFurnSOL) {
   const cd = FP.counterD;
   const S = 29.5;
 
+  // west counter arm (facing dining, Z=832→1022, leaves 5' aisle to south wall)
+  pb(g, 657, 832, Math.round(657+cd*S), 1022, FL, FL+2.95, M.cab);
+  pb(g, 657, 832, Math.round(657+cd*S), 1022, FL+2.95, FL+3.1, M.counter, {ns:1});
+
   // north counter (along z=fz(832))
   pb(g, 657, 832, 976, Math.round(648+(fz(832)+cd)*S), FL, FL+2.95, M.cab);
   pb(g, 657, 832, 976, Math.round(648+(fz(832)+cd)*S), FL+2.95, FL+3.1, M.counter, {ns:1});
@@ -28,6 +32,7 @@ export function build(g, M, FP, addFurnSOL) {
   // uppers east
   box(g, fx(976)-cd, fx(976), fz(900), fz(1100), FL+5.2, FL+7.6, M.cabU);
 
+  addFurnSOL(fx(657), fx(657)+cd, fz(832), fz(1022));
   addFurnSOL(fx(657), fx(976), fz(832), fz(832)+cd);
   addFurnSOL(fx(976)-cd, fx(976), fz(832), fz(1170));
 }
