@@ -6,15 +6,15 @@ export function std(c, r = 0.9, m = 0) {
 
 export function createMaterials() {
   return {
-    wall: std(0xf2eee6, .95),
+    wall: std(0xf0ece4, .90),           // off-white walls — light, matte
     plinth: std(0xbdb6a8, .95),
     col: Object.assign(std(0x2c2f36, .8), { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
     frame: std(0x3a3f48, .5, .4),
-    floor: std(0xe6e1d7, .55),
-    floorK: std(0xd3d8dc, .5),
-    floorW: std(0xb8c6ce, .5),
-    floorB: std(0xb98b5f, .6),
-    floorP: std(0xf3efe7, .4),
+    floor: std(0xc8b99a, .65),          // warm sandstone — clearly distinct from walls
+    floorK: std(0xa8b5b8, .55),         // kitchen: cool slate grey tile
+    floorW: std(0x8fa4ae, .50),         // wet-area: darker grey-blue tile
+    floorB: std(0xb98b5f, .60),         // bedroom: warm timber tone
+    floorP: std(0xdcd5c5, .55),         // pooja: pale stone
     porch: std(0xcdbfa9, .8),
     door: std(0x8a5a36, .6),
     steel: std(0x9aa3ad, .35, .7),

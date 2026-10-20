@@ -26,17 +26,17 @@ export function build(g, M, FP, addFurnSOL) {
   box(g, ct_x0, ct_x1, sz-0.75, sz+0.75, FL+1.4,  FL+1.52, M.wood);    // glass top
 
   // ── Wall-mounted 65" TV on west wall ──
-  const tvWall = fx(285) + 16/29.5/2;  // inner face of west wall
+  const tvWall = fx(222 + 8);  // inner face of living room west wall (px=222, TH=16)
   // 65-inch: 57" wide = 4.78ft, 33" tall = 2.77ft; mount centre at eye height ~5ft
   const tvW = 4.78, tvH = 2.77;
   const tvZ0 = sz - tvW/2, tvZ1 = sz + tvW/2;
   const tvY0 = FL + 3.6, tvY1 = tvY0 + tvH;   // bottom at 5.1ft, top at 7.9ft
   // slim wall-mount bracket bar (steel, tight to wall)
-  box(g, tvWall, tvWall+0.06, sz-0.5, sz+0.5, tvY0+tvH/2-0.05, tvY0+tvH/2+0.05, M.steel, {ns:1});
-  // bezel (dark frame, 3" border)
-  box(g, tvWall+0.03, tvWall+0.13, tvZ0-0.08, tvZ1+0.08, tvY0-0.08, tvY1+0.08, M.dark);
+  box(g, tvWall, tvWall+0.04, sz-0.4, sz+0.4, tvY0+tvH/2-0.04, tvY0+tvH/2+0.04, M.steel, {ns:1});
+  // bezel (dark frame, flush to wall)
+  box(g, tvWall, tvWall+0.12, tvZ0-0.08, tvZ1+0.08, tvY0-0.08, tvY1+0.08, M.dark);
   // screen
-  box(g, tvWall+0.05, tvWall+0.12, tvZ0, tvZ1, tvY0, tvY1, M.dark, {ns:1});
+  box(g, tvWall+0.01, tvWall+0.11, tvZ0, tvZ1, tvY0, tvY1, M.dark, {ns:1});
 
   // armchair facing TV (south-west of sofa)
   box(g, fx(250), fx(330), fz(1460), fz(1505), FL,     FL+1.5,  M.fabric);
