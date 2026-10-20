@@ -1,0 +1,11 @@
+{
+  "name": "my-nest-designer",
+  "version": "1.0.0",
+  "description": "3D floor plan viewer — My Nest Designer",
+  "scripts": {
+    "start": "serve ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

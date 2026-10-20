@@ -1,0 +1,177 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My Nest Designer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#eceef2;--panel:#ffffff;--ink:#18202c;--muted:#596578;--line:#d2d8e1;
+  --accent:#2447c9;--accent-ink:#ffffff;--mark:#7b3fd4;--sky:#dde5ee;--ground:#cfd5dc;
+  --font:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#11151c;--panel:#1a202a;--ink:#e7ebf2;--muted:#9aa6b8;--line:#2b3442;
+  --accent:#86a0ff;--accent-ink:#0d1220;--mark:#b98cff;--sky:#1c2430;--ground:#262e3a;color-scheme:dark;
+}}
+:root[data-theme=dark]{--bg:#11151c;--panel:#1a202a;--ink:#e7ebf2;--muted:#9aa6b8;--line:#2b3442;--accent:#86a0ff;--accent-ink:#0d1220;--mark:#b98cff;--sky:#1c2430;--ground:#262e3a;color-scheme:dark;}
+html,body{height:100%;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4;
+  padding:8px max(12px,env(safe-area-inset-left,0px)) 8px max(12px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:8px;box-sizing:border-box;}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:16px;font-weight:600;margin:0;letter-spacing:.01em}
+.meta{font-family:var(--mono);font-size:11px;color:var(--muted)}
+#stage{position:relative;flex:1;min-height:340px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--sky);touch-action:none}
+canvas{display:block;width:100%;height:100%}
+#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;left:0;top:0;transform:translate(-50%,-50%);white-space:nowrap;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  background:color-mix(in srgb,var(--panel) 88%,transparent);color:var(--ink);padding:2px 6px;border-radius:4px;border:1px solid var(--line);line-height:1.25;text-align:center;pointer-events:auto;cursor:pointer;}
+.lb small{display:block;font-family:var(--mono);font-weight:400;letter-spacing:0;text-transform:none;font-size:9.5px;color:var(--muted)}
+.lb.mk{border-color:var(--mark);color:var(--mark);background:var(--panel);cursor:default}
+.lb.mk small{color:var(--mark)}
+.lb.win-lbl{border-color:#4a9eff;color:#2060c0;background:color-mix(in srgb,var(--panel) 90%,transparent);font-size:9px;font-weight:500;letter-spacing:0;text-transform:none;cursor:default}
+.lb.win-lbl b{font-family:var(--mono);font-size:9px}
+
+/* room detail card */
+.room-card{position:absolute;left:0;top:0;transform:translate(-50%,-110%);pointer-events:auto;
+  background:color-mix(in srgb,var(--panel) 94%,transparent);border:1px solid var(--accent);border-radius:8px;
+  padding:8px 10px;font-size:11px;font-family:var(--mono);color:var(--ink);min-width:160px;max-width:220px;
+  box-shadow:0 2px 12px rgba(0,0,0,.15);z-index:10;}
+.room-card h3{margin:0 0 4px;font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.room-card .dim{font-size:12px;font-weight:600;margin-bottom:6px;color:var(--ink)}
+.room-card table{width:100%;border-collapse:collapse;font-size:10px}
+.room-card td{padding:1px 3px;vertical-align:top}
+.room-card td:first-child{color:var(--muted);white-space:nowrap;padding-right:6px}
+.room-card td:last-child{color:var(--ink)}
+.room-card .space-row{color:var(--muted);font-style:italic}
+.room-card .close-btn{position:absolute;right:5px;top:4px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);padding:0;line-height:1}
+
+#hint{position:absolute;left:10px;bottom:10px;font-size:11px;color:var(--muted);background:color-mix(in srgb,var(--panel) 85%,transparent);padding:3px 8px;border-radius:6px;pointer-events:none}
+#hud{position:absolute;right:10px;top:10px;background:color-mix(in srgb,var(--panel) 90%,transparent);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:10.5px;color:var(--ink);max-width:200px;display:none;pointer-events:auto}
+#hud h4{margin:0 0 4px;font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+#hud .hud-dim{font-size:12px;font-weight:600;margin-bottom:5px}
+#hud .hud-furn{font-size:10px;color:var(--muted)}
+#hud-toggle{position:absolute;right:10px;top:10px;display:none}
+#pad{position:absolute;right:10px;bottom:10px;display:none;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,44px);gap:6px}
+#pad.on{display:grid}
+#pad button{border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 90%,transparent);color:var(--ink);border-radius:8px;font-size:18px;touch-action:none;user-select:none}
+#pad button:active{background:var(--accent);color:var(--accent-ink)}
+#pad .pf{grid-column:2;grid-row:1}#pad .pl{grid-column:1;grid-row:2}#pad .pb{grid-column:2;grid-row:2}#pad .pr{grid-column:3;grid-row:2}
+#loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:13px}
+/* toolbar */
+.bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:7px 12px;cursor:pointer;min-height:36px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+.tg{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer;min-height:36px}
+.tg[aria-pressed=true]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.tg i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);display:inline-block;flex-shrink:0}
+.tg[aria-pressed=true] i{background:var(--accent);border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* collapsible panels */
+details{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:0 12px}
+summary{cursor:pointer;padding:9px 0;font-weight:500;font-size:13px;user-select:none}
+details[open] summary{border-bottom:1px solid var(--line);margin-bottom:8px}
+.furn-sliders{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;padding-bottom:10px}
+.fslider{display:flex;flex-direction:column;gap:3px}
+.fslider label{font-size:11px;font-weight:600;color:var(--muted);font-family:var(--mono)}
+.fslider .row{display:flex;align-items:center;gap:6px}
+.fslider input[type=range]{flex:1;accent-color:var(--accent);height:4px}
+.fslider .val{font-family:var(--mono);font-size:11px;color:var(--accent);min-width:28px;text-align:right}
+.fslider .space-info{font-size:10px;color:var(--muted);font-family:var(--mono)}
+details ul{margin:0 0 10px;padding-left:16px;color:var(--ink);display:grid;gap:4px}
+details p{margin:0 0 10px;color:var(--muted);font-size:12px}
+.k{font-family:var(--mono);font-size:12px}
+@media(max-width:520px){.seg button{padding:7px 9px}.furn-sliders{grid-template-columns:1fr}}
+/* ruler overlay */
+#ruler-svg{position:absolute;inset:0;pointer-events:none;overflow:visible}
+#ruler-svg line{stroke:#f97316;stroke-width:2;stroke-dasharray:6 3}
+#ruler-svg circle{fill:#f97316}
+#ruler-svg .end-line{stroke:#f97316;stroke-width:2;stroke-dasharray:none}
+.ruler-badge{position:absolute;left:0;top:0;transform:translate(-50%,-50%);background:#f97316;color:#fff;
+  font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;
+  pointer-events:none;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.25)}
+#ruler-hint{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);
+  background:color-mix(in srgb,#f97316 90%,transparent);color:#fff;
+  font-size:11.5px;padding:3px 10px;border-radius:6px;pointer-events:none;display:none;white-space:nowrap}
+.ruler-badge.selected{background:#c2410c;outline:2px solid #fff;outline-offset:1px}
+</style>
+</head><body>
+<header>
+  <h1>My Nest Designer</h1>
+  <div class="meta">30' × 50' plot · floor-to-slab 10' · plinth 1'6"</div>
+</header>
+
+<div id="stage">
+  <canvas id="c"></canvas>
+  <div id="labels"></div>
+  <div id="loading">Building the model…</div>
+  <svg id="ruler-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div id="ruler-hint">📐 Click a point, drag to measure — release to lock</div>
+  <div id="hint">Drag to orbit · pinch or scroll to zoom</div>
+  <div id="hud">
+    <h4 id="hud-room">–</h4>
+    <div class="hud-dim" id="hud-dim"></div>
+    <div class="hud-furn" id="hud-furn"></div>
+  </div>
+  <button id="hud-toggle" class="tg" aria-pressed="true" style="font-size:11px;padding:4px 8px"><i></i>Room info</button>
+  <div id="pad" aria-label="Walk controls">
+    <button class="pf" data-k="f" aria-label="Forward">↑</button>
+    <button class="pl" data-k="l" aria-label="Left">←</button>
+    <button class="pb" data-k="b" aria-label="Back">↓</button>
+    <button class="pr" data-k="r" aria-label="Right">→</button>
+  </div>
+</div>
+
+<div class="bar">
+  <div class="seg" role="group" aria-label="View">
+    <button data-mode="orbit" aria-pressed="true">Orbit</button>
+    <button data-mode="plan" aria-pressed="false">Top</button>
+    <button data-mode="walk" aria-pressed="false">Walk inside</button>
+  </div>
+  <button class="tg" data-t="cut" aria-pressed="false"><i></i>Cutaway</button>
+  <button class="tg" data-t="roof" aria-pressed="false"><i></i>Roof</button>
+  <button class="tg" data-t="furn" aria-pressed="false"><i></i>Furniture</button>
+  <button class="tg" data-t="labels" aria-pressed="false"><i></i>Room labels</button>
+  <button class="tg" data-t="winlabels" aria-pressed="false"><i></i>Window labels</button>
+  <button class="tg" data-t="marks" aria-pressed="false"><i></i>Markups</button>
+  <button class="tg" data-t="car" aria-pressed="false"><i></i>Car</button>
+  <button class="tg" id="ruler-btn" aria-pressed="false" style="border-color:#f97316"><i style="border-color:#f97316"></i>Ruler</button>
+  <div class="seg" id="ruler-unit-seg" style="display:none;border-color:#f97316" role="group" aria-label="Ruler unit">
+    <button id="ru-ft" aria-pressed="true" style="font-size:12px;padding:7px 10px">ft″</button>
+    <button id="ru-in" aria-pressed="false" style="font-size:12px;padding:7px 10px;border-left-color:#f97316">in</button>
+  </div>
+</div>
+
+<details id="furn-panel">
+  <summary>Furniture sizes</summary>
+  <div class="furn-sliders" id="fsliders"></div>
+</details>
+
+<details>
+  <summary>Reading the markups &amp; assumptions</summary>
+  <ul>
+    <li><b>Pooja window:</b> replaced with <span class="k">2' × 6'</span> window on north wall (pen markup).</li>
+    <li><b>Kitchen north wall:</b> long window closed (red X). Small <span class="k">2' × 2'</span> at east end.</li>
+    <li><b>Kitchen east wall:</b> <span class="k">7' × 3.5'</span> band window at counter height (sill at 3ft, head at 6.5ft).</li>
+    <li><b>Lift:</b> <span class="k">4' × 4.5'</span> shaft, confirmed by pen annotation.</li>
+    <li><b>Sofa:</b> moved to east wall of living area so the corridor between living/foyer/stair is walkable.</li>
+    <li><b>Furniture:</b> scaled down to fit rooms with min 2.5' clearance on walking sides.</li>
+  </ul>
+  <p>Assumed: floor-to-slab 10', doors 7', plinth 1'6", unmarked windows 3' sill / 4' tall, stair 16 risers. Window types follow the joinery schedule.</p>
+</details>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="src/main.js"></script>
+</body></html>
