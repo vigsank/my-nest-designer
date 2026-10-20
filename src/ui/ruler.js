@@ -125,7 +125,7 @@ export function initRuler(canvas, stage, rulerSVG, rulerHint, rulerBtn, camera, 
   }
 
   canvas.addEventListener('pointerdown', e => {
-    if (!rulerState.active) return;
+    if (!rulerState.active || e.altKey) return;
     const pt = screenTo3D(e.clientX, e.clientY);
     if (!pt) return;
     rulerState.measuring = true; rulerState.p0 = pt.clone(); rulerState.p1 = pt.clone();

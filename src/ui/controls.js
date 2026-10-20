@@ -25,14 +25,14 @@ export function initControls(opts) {
   let drag = null;
 
   canvas.addEventListener('pointerdown', e => {
-    if (appState.st.mode === 'walk' && !rulerState.active) {
+    if (appState.st.mode === 'walk' && (!rulerState.active || e.altKey)) {
       drag = { x: e.clientX, y: e.clientY };
       canvas.setPointerCapture(e.pointerId);
     }
   });
 
   canvas.addEventListener('pointermove', e => {
-    if (drag && appState.st.mode === 'walk' && !rulerState.active) {
+    if (drag && appState.st.mode === 'walk' && (!rulerState.active || e.altKey)) {
       walkState.yaw += (e.clientX - drag.x) * 0.006;
       walkState.pitch = Math.max(-1.2, Math.min(1.2, walkState.pitch + (e.clientY - drag.y) * 0.005));
       drag = { x: e.clientX, y: e.clientY };
@@ -115,7 +115,7 @@ export function initControls(opts) {
       controls.enableDamping = false; controls.update(); controls.enableDamping = true;
     }
     if (m === 'walk') {
-      hint.textContent = 'Drag to look · arrows or W A S D to move';
+      hint.textContent = 'Drag to look · Alt+drag to look with ruler on · arrows or W A S D to move';
       // initial filter based on starting room; frame loop keeps it updated
     }
 
