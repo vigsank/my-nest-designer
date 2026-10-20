@@ -2,7 +2,7 @@
 
 An interactive 3D floor plan viewer for residential plots — built for owners who want to walk through their home before it's built.
 
-**Live demo (plot 63 HB):** *(GitHub Pages URL once deployed)*
+**Live demo (plot 63 HB):** https://vigsank.github.io/my-nest-designer/
 
 ---
 
