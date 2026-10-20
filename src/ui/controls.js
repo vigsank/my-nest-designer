@@ -105,12 +105,14 @@ export function initControls(opts) {
       controls.minPolarAngle = 0;
       hint.textContent = 'Drag to orbit · pinch or scroll to zoom · double-click a room to enter';
       filterSliders(null);
+      controls.enableDamping = false; controls.update(); controls.enableDamping = true;
     }
     if (m === 'plan') {
       camera.position.set(15, 112, 25.2);
       controls.target.set(15, 0, 25);
       hint.textContent = 'Top view · drag / pinch to zoom · double-click a room to enter';
       filterSliders(null);
+      controls.enableDamping = false; controls.update(); controls.enableDamping = true;
     }
     if (m === 'walk') {
       hint.textContent = 'Drag to look · arrows or W A S D to move';
