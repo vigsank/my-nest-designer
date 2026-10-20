@@ -10,12 +10,12 @@ export function createMaterials() {
     plinth: std(0xbdb6a8, .95),
     col: Object.assign(std(0x2c2f36, .8), { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
     frame: std(0x3a3f48, .5, .4),
-    floor: std(0xc8b99a, .65),          // warm sandstone — clearly distinct from walls
-    floorK: std(0xa8b5b8, .55),         // kitchen: cool slate grey tile
-    floorW: std(0x8fa4ae, .50),         // wet-area: darker grey-blue tile
-    floorB: std(0xb98b5f, .60),         // bedroom: warm timber tone
-    floorP: std(0xdcd5c5, .55),         // pooja: pale stone
-    porch: std(0xcdbfa9, .8),
+    floor: std(0xc9a87c, .65),          // main areas: light warm brown tile
+    floorK: std(0xbfa080, .60),         // kitchen: slightly cooler brown tile
+    floorW: std(0xc2a888, .55),         // wet-area: neutral light brown tile
+    floorB: std(0xb8895a, .60),         // bedroom: warmer mid-brown tile
+    floorP: std(0xd4b898, .60),         // pooja: pale cream-brown tile
+    porch: std(0xb89870, .80),          // porch: mid warm brown (outdoor)
     door: std(0x8a5a36, .6),
     steel: std(0x9aa3ad, .35, .7),
     dark: std(0x20242b, .5),
