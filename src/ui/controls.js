@@ -1,4 +1,6 @@
 import { walkState } from './walkMode.js';
+import * as THREE from 'three';
+import { FL } from '../core/coords.js';
 
 const KM = {
   ArrowUp: 'f', w: 'f', W: 'f',
@@ -12,7 +14,7 @@ export function initControls(opts) {
     canvas, stage, camera, controls, appState,
     furnGrp, carGrp, rulerState,
     rebuild, rebuildFurniture, refreshCardContent,
-    labelSystem,
+    labelSystem, ROOMS, filterSliders,
   } = opts;
 
   const hint    = document.getElementById('hint');
@@ -39,6 +41,32 @@ export function initControls(opts) {
 
   canvas.addEventListener('pointerup',     () => { drag = null; });
   canvas.addEventListener('pointercancel', () => { drag = null; });
+
+  // Double-click in orbit/top: teleport to room centre and enter walk mode
+  const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -(FL + 0.05));
+  const raycaster = new THREE.Raycaster();
+  const ndcPos = new THREE.Vector2();
+  const hitPt = new THREE.Vector3();
+
+  canvas.addEventListener('dblclick', e => {
+    if (appState.st.mode === 'walk') return;
+    const rect = canvas.getBoundingClientRect();
+    ndcPos.set(
+      ((e.clientX - rect.left) / rect.width)  * 2 - 1,
+      -((e.clientY - rect.top)  / rect.height) * 2 + 1,
+    );
+    raycaster.setFromCamera(ndcPos, camera);
+    if (!raycaster.ray.intersectPlane(floorPlane, hitPt)) return;
+    const rm = ROOMS.find(r =>
+      hitPt.x >= r.x0 && hitPt.x <= r.x1 && hitPt.z >= r.z0 && hitPt.z <= r.z1
+    );
+    if (!rm) return;
+    walkState.x = (rm.x0 + rm.x1) / 2;
+    walkState.z = (rm.z0 + rm.z1) / 2;
+    walkState.yaw = -Math.PI / 2;
+    walkState.pitch = 0;
+    setMode('walk');
+  });
 
   document.querySelectorAll('#pad button').forEach(b => {
     const k = b.dataset.k;
@@ -75,15 +103,18 @@ export function initControls(opts) {
       camera.position.set(-31, 55, 89);
       controls.target.set(15, 2, 25);
       controls.minPolarAngle = 0;
-      hint.textContent = 'Drag to orbit · pinch or scroll to zoom';
+      hint.textContent = 'Drag to orbit · pinch or scroll to zoom · double-click a room to enter';
+      filterSliders(null);
     }
     if (m === 'plan') {
       camera.position.set(15, 112, 25.2);
       controls.target.set(15, 0, 25);
-      hint.textContent = 'Top view · drag / pinch to zoom';
+      hint.textContent = 'Top view · drag / pinch to zoom · double-click a room to enter';
+      filterSliders(null);
     }
     if (m === 'walk') {
       hint.textContent = 'Drag to look · arrows or W A S D to move';
+      // initial filter based on starting room; frame loop keeps it updated
     }
 
     camera.fov = m === 'walk' ? 68 : 42;

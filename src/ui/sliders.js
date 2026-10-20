@@ -33,7 +33,9 @@ export function buildSliders(ROOMS, appState, onRebuild, refreshCardContent) {
   const cont = document.getElementById('fsliders');
   cont.innerHTML = '';
   FSLIDER_DEFS.forEach(def => {
-    const wrap = document.createElement('div'); wrap.className = 'fslider';
+    const wrap = document.createElement('div');
+    wrap.className = 'fslider';
+    wrap.dataset.sliderRoom = def.room;
     const lbl = document.createElement('label'); lbl.textContent = def.label;
     const row = document.createElement('div'); row.className = 'row';
     const inp = document.createElement('input');
@@ -54,5 +56,21 @@ export function buildSliders(ROOMS, appState, onRebuild, refreshCardContent) {
     wrap.appendChild(lbl); wrap.appendChild(row); wrap.appendChild(info);
     cont.appendChild(wrap);
     updateSliderInfo(def.key, info, ROOMS, appState.FP);
+  });
+}
+
+// Show only sliders for roomId (walk mode). Pass null to show all (orbit/top).
+export function filterSliders(roomId) {
+  const panel = document.getElementById('furn-panel');
+  const wraps = document.querySelectorAll('#fsliders .fslider');
+  if (!roomId) {
+    panel.style.display = '';
+    wraps.forEach(w => { w.style.display = ''; });
+    return;
+  }
+  const hasAny = FSLIDER_DEFS.some(d => d.room === roomId);
+  panel.style.display = hasAny ? '' : 'none';
+  wraps.forEach(w => {
+    w.style.display = (w.dataset.sliderRoom === roomId) ? '' : 'none';
   });
 }
