@@ -25,14 +25,14 @@ export function initControls(opts) {
   let drag = null;
 
   canvas.addEventListener('pointerdown', e => {
-    if (appState.st.mode === 'walk') {
+    if (appState.st.mode === 'walk' && !rulerState.active) {
       drag = { x: e.clientX, y: e.clientY };
       canvas.setPointerCapture(e.pointerId);
     }
   });
 
   canvas.addEventListener('pointermove', e => {
-    if (drag && appState.st.mode === 'walk') {
+    if (drag && appState.st.mode === 'walk' && !rulerState.active) {
       walkState.yaw += (e.clientX - drag.x) * 0.006;
       walkState.pitch = Math.max(-1.2, Math.min(1.2, walkState.pitch + (e.clientY - drag.y) * 0.005));
       drag = { x: e.clientX, y: e.clientY };
