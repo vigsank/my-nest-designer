@@ -1,32 +1,49 @@
 import { fx, fz, FL, S } from '../../../core/coords.js';
 import { box, pb } from '../../../core/geometry.js';
-import { fz_inv } from '../../../core/coords.js';
 
 export function build(g, M, FP, addFurnSOL) {
-  const sW = FP.sofaW/2, sD = FP.sofaD;
-  const sx = fx(580) - sD/2, sz = fz(1340);
+  const sW = FP.sofaW / 2, sD = FP.sofaD;
 
-  // dead-code path kept for fidelity (fz_inv used here but box below does actual work)
-  pb(g,
-    Math.round(156+(sx-sW)*S), Math.round(648+fz_inv(sz-sW/sW)*S),
-    Math.round(156+(sx+sD)*S), Math.round(648+fz_inv(sz+FP.sofaW/2)*S),
-    FL, FL+1.5, M.fabric);
+  // Sofa: back on east side, faces west toward TV wall
+  const sx = fx(580) - sD / 2;   // west edge of sofa
+  const sz = fz(1340);            // centre Z
 
-  box(g, sx, sx+sD, sz-FP.sofaW/2, sz+FP.sofaW/2, FL, FL+1.5, M.fabric);
-  box(g, sx+sD-0.3, sx+sD, sz-FP.sofaW/2, sz+FP.sofaW/2, FL+1.5, FL+3.0, M.fabric);
-  box(g, sx, sx+0.3, sz-FP.sofaW/2, sz+FP.sofaW/2, FL+1.5, FL+2.2, M.fabric);
-  box(g, sx+sD-0.3, sx+sD, sz-FP.sofaW/2-0.3, sz-FP.sofaW/2+0.3, FL, FL+2.2, M.fabric);
-  box(g, sx+sD-0.3, sx+sD, sz+FP.sofaW/2-0.3, sz+FP.sofaW/2+0.3, FL, FL+2.2, M.fabric);
-  addFurnSOL(sx, sx+sD, sz-FP.sofaW/2, sz+FP.sofaW/2);
+  // sofa seat + back + arms
+  box(g, sx, sx+sD,       sz-sW, sz+sW, FL,      FL+1.5,  M.fabric);
+  box(g, sx+sD-0.3, sx+sD, sz-sW, sz+sW, FL+1.5,  FL+3.0,  M.fabric);  // back rest
+  box(g, sx, sx+0.3,       sz-sW, sz+sW, FL+1.5,  FL+2.2,  M.fabric);  // front arm low
+  box(g, sx+sD-0.3, sx+sD, sz-sW-0.3, sz-sW+0.3, FL, FL+2.2, M.fabric); // arm L
+  box(g, sx+sD-0.3, sx+sD, sz+sW-0.3, sz+sW+0.3, FL, FL+2.2, M.fabric); // arm R
+  addFurnSOL(sx, sx+sD, sz-sW, sz+sW);
 
-  // rug
-  box(g, sx-0.15, sx+sD+2.5, sz-FP.sofaW/2-0.5, sz+FP.sofaW/2+0.5, FL+0.05, FL+0.1, M.rug, {ns:1});
+  // rug (extends west toward TV wall and north/south of sofa)
+  box(g, sx-3.5, sx+sD+0.3, sz-sW-0.5, sz+sW+0.5, FL+0.05, FL+0.1, M.rug, {ns:1});
 
-  // coffee table
-  box(g, sx+sD+0.4, sx+sD+0.4+2.5, sz-0.75, sz+0.75, FL+0.1, FL+1.5, M.woodD);
-  box(g, sx+sD+0.4, sx+sD+0.4+2.5, sz-0.75, sz+0.75, FL+1.5, FL+1.6, M.wood);
+  // coffee table: in front (west) of sofa, between sofa and TV
+  const ct_x1 = sx - 0.5;
+  const ct_x0 = ct_x1 - 2.5;
+  box(g, ct_x0, ct_x1, sz-0.75, sz+0.75, FL+0.1,  FL+1.4,  M.woodD);   // legs/body
+  box(g, ct_x0, ct_x1, sz-0.75, sz+0.75, FL+1.4,  FL+1.52, M.wood);    // glass top
 
-  // armchair
-  box(g, fx(250), fx(330), fz(1460), fz(1505), FL, FL+1.5, M.fabric);
-  box(g, fx(322), fx(330), fz(1460), fz(1505), FL+1.5, FL+2.8, M.fabric);
+  // ── TV unit on west wall ──
+  const tvWall = fx(285);
+  const tvUz0 = sz - 2.8, tvUz1 = sz + 2.8;
+  // low TV cabinet/unit
+  box(g, tvWall, tvWall+0.45, tvUz0, tvUz1, FL,      FL+1.2,  M.woodD);
+  box(g, tvWall, tvWall+0.45, tvUz0, tvUz1, FL+1.2,  FL+1.26, M.dark, {ns:1}); // top slab
+
+  // 65-inch TV screen (57" wide = 4.78ft, 33" tall = 2.77ft)
+  const tvW = 4.78, tvH = 2.77;
+  const tvZ0 = sz - tvW/2, tvZ1 = sz + tvW/2;
+  const tvY0 = FL + 1.3, tvY1 = tvY0 + tvH;
+  // bezel (dark frame)
+  box(g, tvWall+0.03, tvWall+0.12, tvZ0-0.07, tvZ1+0.07, tvY0-0.07, tvY1+0.07, M.dark);
+  // screen
+  box(g, tvWall+0.05, tvWall+0.11, tvZ0, tvZ1, tvY0, tvY1, M.dark, {ns:1});
+  // TV stand/neck
+  box(g, tvWall+0.02, tvWall+0.13, sz-0.25, sz+0.25, FL+1.26, tvY0, M.dark, {ns:1});
+
+  // armchair facing TV (south-west of sofa)
+  box(g, fx(250), fx(330), fz(1460), fz(1505), FL,     FL+1.5,  M.fabric);
+  box(g, fx(322), fx(330), fz(1460), fz(1505), FL+1.5, FL+2.8,  M.fabric);
 }
