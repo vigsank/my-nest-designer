@@ -26,7 +26,7 @@ export function build(g, M, FP, addFurnSOL) {
   box(g, ct_x0, ct_x1, sz-0.75, sz+0.75, FL+1.4,  FL+1.52, M.wood);    // glass top
 
   // ── Wall-mounted 65" TV on west wall ──
-  const tvWall = fx(285);
+  const tvWall = fx(285) + 16/29.5/2;  // inner face of west wall
   // 65-inch: 57" wide = 4.78ft, 33" tall = 2.77ft; mount centre at eye height ~5ft
   const tvW = 4.78, tvH = 2.77;
   const tvZ0 = sz - tvW/2, tvZ1 = sz + tvW/2;
