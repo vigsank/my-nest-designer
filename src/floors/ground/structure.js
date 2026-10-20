@@ -83,7 +83,7 @@ export function buildStructure(g, M, appState) {
     {a:1895, b:1945, s:3, e:7, k:'win', label:"W1 2'×4'"}
   ], M);
   wall(g, false, 1170, 657, 984, [], M);
-  wall(g, true, 660, 832, 1170, [], M);
+  wall(g, true, 660, 832, 1022, [], M);
   wall(g, true, 285, 1513, 1643, [{a:1519,b:1637,s:0,e:7,k:'door',label:"MD 4'×7'"}], M);
   wall(g, false, 1513, 222, 330, [], M);
   wall(g, false, 1513, 452, 490, [], M);
