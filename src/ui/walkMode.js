@@ -10,7 +10,7 @@ function inPlinth(x, z) {
 
 export function blocked(x, z, appState) {
   const R = 0.75;
-  for (const s of appState.SOL.concat(appState.SOLX)) {
+  for (const s of appState.SOL) {
     if (x > s[0] - R && x < s[1] + R && z > s[2] - R && z < s[3] + R) return true;
   }
   return x < 0.5 || x > 29.5 || z < 0.5 || z > 49.5;
