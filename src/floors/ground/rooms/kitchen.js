@@ -1,5 +1,5 @@
-import { fx, fz, FL } from '../../core/coords.js';
-import { box, pb } from '../../core/geometry.js';
+import { fx, fz, FL } from '../../../core/coords.js';
+import { box, pb } from '../../../core/geometry.js';
 
 export function build(g, M, FP, addFurnSOL) {
   const cd = FP.counterD;

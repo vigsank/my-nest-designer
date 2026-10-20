@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { fx, fz, FL } from '../../core/coords.js';
-import { box } from '../../core/geometry.js';
+import { fx, fz, FL } from '../../../core/coords.js';
+import { box } from '../../../core/geometry.js';
 
 export function build(g, M, FP, addFurnSOL) {
   const dW = FP.diningW/2, dD = FP.diningD/2;

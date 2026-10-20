@@ -1,5 +1,5 @@
-import { fx, fz, FL } from '../../core/coords.js';
-import { box } from '../../core/geometry.js';
+import { fx, fz, FL } from '../../../core/coords.js';
+import { box } from '../../../core/geometry.js';
 
 export function build(g, M, FP, addFurnSOL) {
   // basin shelf + pedestal

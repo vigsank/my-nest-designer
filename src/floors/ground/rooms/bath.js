@@ -1,5 +1,5 @@
-import { fx, fz, FL } from '../../core/coords.js';
-import { box, cyl } from '../../core/geometry.js';
+import { fx, fz, FL } from '../../../core/coords.js';
+import { box, cyl } from '../../../core/geometry.js';
 
 function wc(g, px, py, M, FL) {
   const x = fx(px), z = fz(py);

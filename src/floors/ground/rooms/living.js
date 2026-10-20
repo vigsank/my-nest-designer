@@ -1,6 +1,6 @@
-import { fx, fz, FL, S } from '../../core/coords.js';
-import { box, pb } from '../../core/geometry.js';
-import { fz_inv } from '../../core/coords.js';
+import { fx, fz, FL, S } from '../../../core/coords.js';
+import { box, pb } from '../../../core/geometry.js';
+import { fz_inv } from '../../../core/coords.js';
 
 export function build(g, M, FP, addFurnSOL) {
   const sW = FP.sofaW/2, sD = FP.sofaD;
