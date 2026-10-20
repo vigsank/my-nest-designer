@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { fx, fz, FL, H, TH } from '../../core/coords.js';
-import { box, pb, sb } from '../../core/geometry.js';
+import { box, pb, sb, disposeGroup } from '../../core/geometry.js';
 import { wall, doorLeaf, doorArc } from '../../core/joinery.js';
 
 export function buildStructure(g, M, appState) {
+  disposeGroup(g);
+  g.clear();
   appState.SOL.length = 0;
   appState.CAP = (appState.st.cut && appState.st.mode !== 'walk') ? FL + 3.5 : 1e9;
   const showRoof = (appState.st.roof || appState.st.mode === 'walk') && appState.CAP > 1e8;
