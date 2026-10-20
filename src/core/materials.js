@@ -8,7 +8,7 @@ export function createMaterials() {
   return {
     wall: std(0xf2eee6, .95),
     plinth: std(0xbdb6a8, .95),
-    col: std(0x2c2f36, .8),
+    col: Object.assign(std(0x2c2f36, .8), { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }),
     frame: std(0x3a3f48, .5, .4),
     floor: std(0xe6e1d7, .55),
     floorK: std(0xd3d8dc, .5),
