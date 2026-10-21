@@ -86,7 +86,7 @@ export function buildStructure(g, M, appState) {
   wall(g, true, 285, 1513, 1643, [{a:1519,b:1637,s:0,e:7,k:'door',label:"MD 4'×7'"}], M);
   wall(g, false, 1513, 222, 330, [], M);
   wall(g, false, 1513, 452, 490, [], M);
-  wall(g, true, 487, 1513, 1978, [{a:1666,b:1725,s:3,e:7,k:'win',label:"W4 2'×4'"}], M);
+  wall(g, true, 487, 1513, 1978, [{a:1666,b:1725,s:7.5,e:9.5,k:'v1',label:"V1 2'×2'"}], M);
   wall(g, false, 1643, 285, 545, [{a:351,b:470,s:3,e:7,k:'win',label:"W 4'×4'"}], M);
   wall(g, false, 1643, 545, 640, [{a:556,b:629,s:0,e:7,k:'door',label:"D1"}], M);
   wall(g, false, 1787, 487, 640, [], M);
@@ -97,7 +97,7 @@ export function buildStructure(g, M, appState) {
   wall(g, true, 800, 1533, 1643, [], M);
   wall(g, false, 1533, 797, 984, [], M);
   wall(g, false, 1978, 478, 984, [
-    {a:531, b:590, s:5, e:7, k:'v1', label:"V1 2'×2'"},
+    {a:531, b:590, s:7.5, e:9.5, k:'v1', label:"V1 2'×2'"},
     {a:696, b:872, s:3, e:7, k:'win', label:"W2 6'×4'"}
   ], M);
 
@@ -132,6 +132,11 @@ export function buildStructure(g, M, appState) {
   sb(g, 724, 1322, 729, 1388, FL, FL+7, M.steel);
   sb(g, 737, 1290, 855, 1423, 0, FL+0.1, M.dark);
   appState.SOL.push([fx(722), fx(865), fz(1275), fz(1440)]);
+
+  // lift support pillars — 3 corners (NW has door opening; NE, SW, SE get pillars)
+  sb(g, 850, 1275, 865, 1290, 0, FL+H, M.col); // NE corner
+  sb(g, 722, 1425, 737, 1440, 0, FL+H, M.col); // SW corner
+  sb(g, 850, 1425, 865, 1440, 0, FL+H, M.col); // SE corner
 
   // stair
   const r = 10/16;

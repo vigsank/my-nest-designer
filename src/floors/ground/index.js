@@ -59,10 +59,10 @@ export const WIN_LBLS = [
   {label:"W1 2'×4'", px:976, pz:1490, ht:6.0, mk:false},
   {label:"W1 2'×4'", px:976, pz:1920, ht:5.5, mk:false},
   {label:"2'×2'",    px:928, pz:832,  ht:5.0, mk:true},
-  {label:"W4 2'×4'", px:487, pz:1695, ht:5.0, mk:false},
+  {label:"V1 2'×2'", px:487, pz:1695, ht:8.5, mk:false},
   {label:"W 4'×4'",  px:415, pz:1643, ht:5.5, mk:false},
   {label:"W2 6'×4'", px:784, pz:1978, ht:5.5, mk:false},
-  {label:"V1 2'×2'", px:560, pz:1978, ht:6.5, mk:false},
+  {label:"V1 2'×2'", px:560, pz:1978, ht:8.5, mk:false},
   {label:"MD 4'×7'", px:285, pz:1578, ht:4.0, mk:false},
 ];
 
