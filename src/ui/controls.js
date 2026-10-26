@@ -1,6 +1,6 @@
 import { walkState } from './walkMode.js';
 import * as THREE from 'three';
-import { FL, FL1 } from '../core/coords.js';
+import { FL, FL1, FL2 } from '../core/coords.js';
 
 const KM = {
   ArrowUp: 'f', w: 'f', W: 'f',
@@ -12,7 +12,7 @@ const KM = {
 export function initControls(opts) {
   const {
     canvas, stage, camera, controls, appState,
-    gFloor, fFloor, rulerState,
+    gFloor, fFloor, sFloor, rulerState,
     rebuild, rebuildFurniture, refreshCardContent,
     labelSystem, activeROOMS, filterSliders, setFloor,
   } = opts;
@@ -49,7 +49,7 @@ export function initControls(opts) {
 
   canvas.addEventListener('dblclick', e => {
     if (appState.st.mode === 'walk') return;
-    const floorBase = appState.st.floor === 'first' ? FL1 : FL;
+    const floorBase = appState.st.floor === 'second' ? FL2 : appState.st.floor === 'first' ? FL1 : FL;
     const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -(floorBase + 0.05));
     const rect = canvas.getBoundingClientRect();
     ndcPos.set(
@@ -102,8 +102,9 @@ export function initControls(opts) {
     hudEl.style.display  = (m === 'walk' && appState.st.hud) ? 'block' : 'none';
     hudTg.style.display  = m === 'walk' ? 'flex' : 'none';
 
-    const isFirst = appState.st.floor === 'first';
-    const yOff    = isFirst ? FL1 : 0;
+    const isFirst  = appState.st.floor === 'first';
+    const isSecond = appState.st.floor === 'second';
+    const yOff = isSecond ? FL2 : isFirst ? FL1 : 0;
 
     if (m === 'orbit') {
       camera.position.set(-31, 55 + yOff, 89);
@@ -121,7 +122,7 @@ export function initControls(opts) {
       controls.enableDamping = false; controls.update(); controls.enableDamping = true;
     }
     if (m === 'walk') {
-      const floorBase = isFirst ? FL1 : FL;
+      const floorBase = isSecond ? FL2 : isFirst ? FL1 : FL;
       if (walkState.y < floorBase) walkState.y = floorBase + 1.7;
       hint.textContent = 'Drag to look · Alt+drag to look with ruler on · arrows or W A S D to move';
     }
@@ -146,8 +147,11 @@ export function initControls(opts) {
 
       if (k === 'furn') {
         const onG = appState.st.floor === 'ground';
+        const onF = appState.st.floor === 'first';
+        const onS = appState.st.floor === 'second';
         gFloor.furnGrp.visible = onG && appState.st.furn;
-        fFloor.furnGrp.visible = !onG && appState.st.furn;
+        fFloor.furnGrp.visible = onF && appState.st.furn;
+        if (sFloor) sFloor.furnGrp.visible = onS && appState.st.furn;
       } else if (k === 'car') {
         if (gFloor.carGrp) gFloor.carGrp.visible = appState.st.car;
       } else if (k === 'hud') {

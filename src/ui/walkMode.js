@@ -1,4 +1,4 @@
-import { fx, fz, FL, FL1, S } from '../core/coords.js';
+import { fx, fz, FL, FL1, FL2, S } from '../core/coords.js';
 
 export const walkState = { x: fx(305), z: fz(1600), yaw: -Math.PI / 2, pitch: 0, keys: { f: 0, b: 0, l: 0, r: 0 }, y: FL + 5.4 };
 
@@ -29,7 +29,9 @@ export function walkStep(dt, appState) {
 
 export function applyWalkCam(dt, camera, appState) {
   let ty;
-  if (appState && appState.st.floor === 'first') {
+  if (appState && appState.st.floor === 'second') {
+    ty = FL2 + 5.4;
+  } else if (appState && appState.st.floor === 'first') {
     ty = FL1 + 5.4;
   } else {
     ty = (inPlinth(walkState.x, walkState.z) ? FL : 0) + 5.4;
