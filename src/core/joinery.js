@@ -3,6 +3,8 @@ import { fx, fz, FL, H, TH } from './coords.js';
 import { box, sb } from './geometry.js';
 import { appState } from '../state.js';
 
+const _doorHitMat = new THREE.MeshBasicMaterial({ visible: false });
+
 export function frameBars(g, vert, cf, u0, u1, y0, y1, mullions, M) {
   const d = 0.36, t = 0.1;
   const ub = (a, b, ya, yb) => vert
@@ -24,8 +26,9 @@ export function ventBars(g, vert, cf, u0, u1, y0, y1, M) {
   ub(u0, u0+t, y0, y1); ub(u1-t, u1, y0, y1);
 }
 
-export function glassPane(g, vert, c, o, M, marks) {
-  const y0 = FL + o.s, y1 = Math.min(FL + o.e, appState.CAP);
+export function glassPane(g, vert, c, o, M, marks, yBase) {
+  if (yBase === undefined) yBase = FL;
+  const y0 = yBase + o.s, y1 = Math.min(yBase + o.e, appState.CAP);
   if (y1 - y0 < 0.1) return;
   const cf = vert ? fx(c) : fz(c);
   const u0 = vert ? fz(o.a) : fx(o.a);
@@ -38,8 +41,10 @@ export function glassPane(g, vert, c, o, M, marks) {
   if (o.k === 'v1') {
     ventBars(g, vert, cf, u0, u1, y0, y1, M); return;
   }
-  if (vert) box(g, cf-0.05, cf+0.05, u0, u1, y0, y1, glMat, {ns:1, s:1});
-  else box(g, u0, u1, cf-0.05, cf+0.05, y0, y1, glMat, {ns:1, s:1});
+  const gm = vert
+    ? box(g, cf-0.05, cf+0.05, u0, u1, y0, y1, glMat, {ns:1, s:1})
+    : box(g, u0, u1, cf-0.05, cf+0.05, y0, y1, glMat, {ns:1, s:1});
+  if (gm && o.label) gm.userData.joinery = o.label;
   if (o.k === 'sd') {
     const mid = (u0+u1)/2;
     if (vert) {
@@ -55,7 +60,8 @@ export function glassPane(g, vert, c, o, M, marks) {
   }
 }
 
-export function wall(g, vert, c, a, b, ops, M) {
+export function wall(g, vert, c, a, b, ops, M, yBase) {
+  if (yBase === undefined) yBase = FL;
   ops = (ops || []).slice().sort((p, q) => p.a - q.a);
   const seg = (u0, u1, y0, y1, solid) => {
     if (u1 - u0 < 1) return;
@@ -67,31 +73,46 @@ export function wall(g, vert, c, a, b, ops, M) {
   };
   let cur = a;
   for (const o of ops) {
-    seg(cur, o.a, FL, FL+H, true);
-    if (o.s > 0) seg(o.a, o.b, FL, FL+o.s, false);
-    if (o.e < H) seg(o.a, o.b, FL+o.e, FL+H, false);
+    seg(cur, o.a, yBase, yBase+H, true);
+    if (o.s > 0) seg(o.a, o.b, yBase, yBase+o.s, false);
+    if (o.e < H) seg(o.a, o.b, yBase+o.e, yBase+H, false);
     if (o.k === 'win' || o.k === 'sd' || o.k === 'fg' || o.k === 'v1') {
-      glassPane(g, vert, c, o, M, appState.st.marks);
+      glassPane(g, vert, c, o, M, appState.st.marks, yBase);
       const r = vert
         ? [c-TH/2, o.a, c+TH/2, o.b]
         : [o.a, c-TH/2, o.b, c+TH/2];
       appState.SOL.push([fx(r[0]), fx(r[2]), fz(r[1]), fz(r[3])]);
+    } else if (o.k === 'door' && o.label) {
+      // invisible hit-target box so the tooltip raycaster can find the door opening
+      const d = TH / 2;
+      const hm = vert
+        ? new THREE.Mesh(new THREE.BoxGeometry(d*2/29.5, Math.min(7, H), (o.b-o.a)/29.5), _doorHitMat)
+        : new THREE.Mesh(new THREE.BoxGeometry((o.b-o.a)/29.5, Math.min(7, H), d*2/29.5), _doorHitMat);
+      hm.position.set(
+        vert ? fx(c) : (fx(o.a)+fx(o.b))/2,
+        yBase + Math.min(7, H)/2,
+        vert ? (fz(o.a)+fz(o.b))/2 : fz(c)
+      );
+      hm.userData.joinery = o.label;
+      g.add(hm);
     }
     cur = o.b;
   }
-  seg(cur, b, FL, FL+H, true);
+  seg(cur, b, yBase, yBase+H, true);
 }
 
-export function doorLeaf(g, hx, hy, dx, dz, L, M) {
-  const h = Math.min(6.9, appState.CAP - FL);
+export function doorLeaf(g, hx, hy, dx, dz, L, M, yBase) {
+  if (yBase === undefined) yBase = FL;
+  const h = Math.min(6.9, appState.CAP - yBase);
   if (h < 0.1) return;
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(L, h, 0.16), M.door);
-  mesh.position.set(fx(hx)+dx*L/2, FL+h/2, fz(hy)+dz*L/2);
+  mesh.position.set(fx(hx)+dx*L/2, yBase+h/2, fz(hy)+dz*L/2);
   mesh.rotation.y = Math.atan2(-dz, dx);
   mesh.castShadow = true; mesh.receiveShadow = true; g.add(mesh);
 }
 
-export function doorArc(g, hx, hy, L, axis, dir) {
+export function doorArc(g, hx, hy, L, axis, dir, yBase) {
+  if (yBase === undefined) yBase = FL;
   const pts = [], n = 12;
   for (let i = 0; i <= n; i++) {
     const a = i/n * (Math.PI/2) * dir;
@@ -99,6 +120,6 @@ export function doorArc(g, hx, hy, L, axis, dir) {
   }
   const geo = new THREE.BufferGeometry().setFromPoints(pts);
   const line = new THREE.Line(geo, new THREE.LineBasicMaterial({color:0xaaaaaa, opacity:.5, transparent:true}));
-  line.position.set(fx(hx), FL+0.06, fz(hy));
+  line.position.set(fx(hx), yBase+0.06, fz(hy));
   g.add(line);
 }

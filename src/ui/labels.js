@@ -1,12 +1,18 @@
 import * as THREE from 'three';
-import { fx, fz, FL } from '../core/coords.js';
+import { fx, fz, FL, FL1 } from '../core/coords.js';
 
-export function createLabelSystem(camera, stage, lblBox, appState, ROOMS, ROOM_LBLS, WIN_LBLS, MK_LBLS) {
+export function createLabelSystem(camera, stage, lblBox, appState, floorData) {
+  // floorData: { ground: {ROOMS, ROOM_LBLS, WIN_LBLS, MK_LBLS}, first: {...} }
   const labelEls = [];
   const openCards = {};
   const tmp = new THREE.Vector3();
 
+  function activeFloor() {
+    return floorData[appState.st.floor] || floorData.ground;
+  }
+
   function roomCardHTML(roomId) {
+    const { ROOMS } = activeFloor();
     const rm = ROOMS.find(r => r.id === roomId);
     if (!rm) return '';
     const furnRows = rm.furn.map(f => {
@@ -43,8 +49,13 @@ export function createLabelSystem(camera, stage, lblBox, appState, ROOMS, ROOM_L
   }
 
   function buildLabels() {
+    // close all open cards first
+    for (const id in openCards) { openCards[id].remove(); delete openCards[id]; }
     lblBox.innerHTML = '';
     labelEls.length = 0;
+
+    const floorBase = appState.st.floor === 'first' ? FL1 : FL;
+    const { ROOM_LBLS, WIN_LBLS, MK_LBLS } = activeFloor();
 
     ROOM_LBLS.forEach(l => {
       const d = document.createElement('div');
@@ -53,7 +64,7 @@ export function createLabelSystem(camera, stage, lblBox, appState, ROOMS, ROOM_L
       d.dataset.room = l.id;
       d.addEventListener('click', () => toggleRoomCard(l.id, d));
       lblBox.appendChild(d);
-      labelEls.push({ el: d, type: 'room', id: l.id, p: new THREE.Vector3(fx(l.px), FL + l.ht, fz(l.pz)) });
+      labelEls.push({ el: d, type: 'room', id: l.id, p: new THREE.Vector3(fx(l.px), floorBase + l.ht, fz(l.pz)) });
     });
 
     WIN_LBLS.forEach(l => {
@@ -61,7 +72,7 @@ export function createLabelSystem(camera, stage, lblBox, appState, ROOMS, ROOM_L
       d.className = 'lb win-lbl';
       d.innerHTML = `<b>${l.label}</b>`;
       lblBox.appendChild(d);
-      labelEls.push({ el: d, type: 'win', mk: l.mk, p: new THREE.Vector3(fx(l.px), FL + l.ht, fz(l.pz)) });
+      labelEls.push({ el: d, type: 'win', mk: l.mk, p: new THREE.Vector3(fx(l.px), floorBase + l.ht, fz(l.pz)) });
     });
 
     MK_LBLS.forEach(l => {
@@ -69,7 +80,7 @@ export function createLabelSystem(camera, stage, lblBox, appState, ROOMS, ROOM_L
       d.className = 'lb mk';
       d.textContent = l.label;
       lblBox.appendChild(d);
-      labelEls.push({ el: d, type: 'mk', p: new THREE.Vector3(fx(l.px), FL + l.ht, fz(l.pz)) });
+      labelEls.push({ el: d, type: 'mk', p: new THREE.Vector3(fx(l.px), floorBase + l.ht, fz(l.pz)) });
     });
   }
 
@@ -103,5 +114,9 @@ export function createLabelSystem(camera, stage, lblBox, appState, ROOMS, ROOM_L
     }
   }
 
-  return { buildLabels, updateLabels, refreshCardContent };
+  function switchFloor() {
+    buildLabels();
+  }
+
+  return { buildLabels, updateLabels, refreshCardContent, switchFloor };
 }

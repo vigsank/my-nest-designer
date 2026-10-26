@@ -154,4 +154,18 @@ This tool is for residential plot owners to:
 3. **Plan iteratively** — adjust furniture via sliders, toggle cutaway/roof, walk through rooms
 4. **Extend floor by floor** — add first floor, terrace as the build progresses
 
-**Plot 63 HB current state**: ground floor fully modelled — all walls, windows, doors, furniture (adjustable via sliders), exterior site, car, trees. All toolbar features functional. First floor (`F Floor.jpg`) is next.
+**Plot 63 HB current state**: ground floor and first floor fully modelled. All toolbar features functional.
+
+## Joinery tooltip rule
+
+Every `wall()` op **must** include a `label:` string (e.g. `label:"W1 2'×4'"`, `label:"D 3'×7'"`).
+The engine automatically tags the glass pane mesh (`userData.joinery`) or creates an invisible
+hit-target box for door openings with that label. `src/ui/joinery-tooltip.js` reads
+`userData.joinery` via raycasting to show hover/tap dimension tooltips — this works across all
+floors automatically.
+
+Rules:
+- Never omit `label:` on a `wall()` op. If a type has no label yet, use the joinery schedule key
+  (e.g. `label:"V1 2'×2'"`).
+- Never rename or remove `userData.joinery` from joinery meshes.
+- When adding new floors or new joinery types, always supply `label:` on every op.

@@ -1,5 +1,5 @@
 export const appState = {
-  st: { mode:'orbit', cut:false, roof:false, furn:false, labels:false, winlabels:false, marks:false, hud:true, car:false },
+  st: { mode:'orbit', floor:'ground', cut:false, roof:false, furn:false, labels:false, winlabels:false, marks:false, hud:true, car:false },
   CAP: 1e9,
   SOL: [],
   SOLX: [],

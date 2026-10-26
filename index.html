@@ -87,6 +87,15 @@ details ul{margin:0 0 10px;padding-left:16px;color:var(--ink);display:grid;gap:4
 details p{margin:0 0 10px;color:var(--muted);font-size:12px}
 .k{font-family:var(--mono);font-size:12px}
 @media(max-width:520px){.seg button{padding:7px 9px}.furn-sliders{grid-template-columns:1fr}}
+/* joinery tooltip */
+#joinery-tip{position:absolute;left:0;top:0;display:none;pointer-events:none;
+  background:#0e7490;color:#fff;font-family:var(--mono);font-size:12px;font-weight:600;
+  padding:3px 9px;border-radius:10px;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.25);z-index:8}
+/* floor switcher carousel */
+#floor-switcher{position:absolute;right:10px;top:54px;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel);z-index:5}
+#floor-switcher button{border:0;background:transparent;color:var(--ink);font:inherit;font-size:12px;font-weight:600;padding:8px 11px;cursor:pointer;min-width:36px;text-align:center}
+#floor-switcher button+button{border-top:1px solid var(--line)}
+#floor-switcher button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
 /* ruler overlay */
 #ruler-svg{position:absolute;inset:0;pointer-events:none;overflow:visible}
 #ruler-svg line{stroke:#f97316;stroke-width:2;stroke-dasharray:6 3}
@@ -124,6 +133,10 @@ details p{margin:0 0 10px;color:var(--muted);font-size:12px}
     <button class="pl" data-k="l" aria-label="Left">←</button>
     <button class="pb" data-k="b" aria-label="Back">↓</button>
     <button class="pr" data-k="r" aria-label="Right">→</button>
+  </div>
+  <div id="floor-switcher" role="group" aria-label="Floor">
+    <button data-floor="first"  aria-pressed="false">F</button>
+    <button data-floor="ground" aria-pressed="true">G</button>
   </div>
 </div>
 
